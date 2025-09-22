@@ -60,7 +60,7 @@ export default {
 
         const handleHidden = () => {
             emit('hidden');
-        };
+        };        
 
         const dialogWidth = computed(() => {
             // 仿照Bootstrap Modal Size

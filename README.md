@@ -1,6 +1,6 @@
 # 教育訓練說明文件
 
-[在 StackBlitz 下一代編輯器中編輯 ⚡️](https://stackblitz.com/~/github.com/Xiong0804/LCGrid)
+[在 StackBlitz 下一代編輯器中編輯 ⚡️](https://stackblitz.com/~/github.com/satanbaby/LCGrid)
 
 ## 功能需求
 1. 在彈跳視窗中，新增 [承辦人] 欄位（新增按鈕可呼叫彈跳視窗）

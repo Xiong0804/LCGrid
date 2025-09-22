@@ -44,7 +44,49 @@ const app = createApp({
       modalData.value = {}
     }
 
+    const saveItem = () => {
+      if(!modalData.value.ReceNo)
+      {
+        alert("請輸入公文文號");
+      }else
+      {
+        FakeBackend.Create({
+          SN: Date.now(),
+          ReceNo: modalData.value.ReceNo,
+          CaseNo: "K00000",
+          Content: modalData.value.Content,
+          ComeDate: dayjs().add(1, 'day').toDate(),
+          ReceDate: dayjs().add(1 - 60, 'day').toDate(),
+          FinalDate: dayjs().add(1 - 30, 'day').toDate(),
+          User: modalData.value.User
+  
+        });
+        grid.value.query();
+        modalRef.value.hide();
+      }
+    }
+    const editItem = (SN) =>{
+      console.log(SN);
+      const item = FakeBackend.Get(SN);
+      console.log(item);
+      if(!item){
+        alert("查無資料");
+        return;
+      }
+      modalData.value = {
+        ReceNo:item.ReceNo,
+        CaseNo:item.CaseNo,
+        ComeDate:item.ComeDate,
+        ReceDate:item.ReceDate,
+        FinalDate:item.FinalDate,
+        User:item.User,
+        Content:item.Content
+      };
+      modalRef.value.show();
+    };
     return {
+      saveItem,
+      editItem,
       deleteItems,
       exportList,
       changeUser,

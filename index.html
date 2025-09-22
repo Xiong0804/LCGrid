@@ -151,7 +151,7 @@
           <lc-column title="承辦人"><span>{{item.User}}</span></lc-column>
           <lc-column title="狀態">
             處理中
-            <button class="btn btn-sm btn-color01 outline-btn ms-1">編輯</button>
+            <button class="btn btn-sm btn-color01 outline-btn ms-1" @click="editItem(item.SN)">編輯</button>
           </lc-column>
         </template>
       </lc-grid-vue>
@@ -166,12 +166,16 @@
             <input type="text" class="form-control" v-model="modalData.ReceNo">
           </div>
           <div class="mb-3">
+            <label for="input1" class="form-label">承辦人</label>
+            <input type="text" class="form-control" v-model="modalData.User">
+          </div>
+          <div class="mb-3">
             <label for="Textarea1" class="form-label">備註</label>
             <textarea class="form-control" rows="3" v-model="modalData.Content"></textarea>
           </div>
         </template>
         <template #footer>
-          <button type="button" class="btn btn-color01">儲存</button>
+          <button type="button" class="btn btn-color01" @click="saveItem">儲存</button>
         </template>
       </lc-modal>
     </div>
