@@ -147,35 +147,47 @@
           <lc-column title="案號" sort="CaseNo">{{item.CaseNo}}</lc-column>
           <lc-column title="來文日期">{{item.ComeDate.toLocaleDateString()}}</lc-column>
           <lc-column title="接收日期">{{item.ReceDate.toLocaleDateString()}}</lc-column>
-          <lc-column title="到期日期"><span>{{item.FinalDate.toLocaleDateString()}}</span></lc-column>
+          <!-- <lc-column title="到期日期"><span>{{item.FinalDate.toLocaleDateString()}}</span></lc-column> -->
+          <lc-column title="到期日期">
+            <!-- <span :class="dayjs(item.FinalDate).isBefore(dayjs(), 'day') ? 'text-danger' : ''">
+                {{ dayjs(item.FinalDate).format('YYYY/MM/DD') }} -->
+                <span :class="rowStyle(item, '到期日期')">
+                  {{ dayjs(item.FinalDate).format('YYYY/MM/DD') }}
+                </span>
+            </span>
+        </lc-column>
           <lc-column title="承辦人"><span>{{item.User}}</span></lc-column>
           <lc-column title="狀態">
             處理中
-            <button class="btn btn-sm btn-color01 outline-btn ms-1" @click="editItem(item.SN)">編輯</button>
+            <button class="btn btn-sm btn-color01 outline-btn ms-1" @click="checkItem(item.SN)">檢視</button>
+            <button class="btn btn-sm btn-color01 outline-btn ms-1" @click="editItem(item.SN)">編輯</button>            
           </lc-column>
         </template>
       </lc-grid-vue>
       <!-- 新增燈箱 -->
       <lc-modal ref="modalRef" @hidden="onModalHidden">
         <template #header>
-          <h1 class="modal-title fs-5">彈出視窗 - {新增/編輯/檢視}</h1>
+          <h1 class="modal-title fs-5">{{ modalTitle }}</h1>
         </template>
         <template #body>
           <div class="mb-3">
             <label for="input0" class="form-label required">公文文號</label>
-            <input type="text" class="form-control" v-model="modalData.ReceNo">
+            <span v-if="isEditMode === '檢視'"><br/>{{modalData.ReceNo}}</span>
+            <input v-else type="text" class="form-control" v-model="modalData.ReceNo">
           </div>
           <div class="mb-3">
             <label for="input1" class="form-label">承辦人</label>
-            <input type="text" class="form-control" v-model="modalData.User">
+            <span v-if="isEditMode === '檢視'"><br/>{{modalData.User}}</span>
+            <input v-else type="text" class="form-control" v-model="modalData.User">
           </div>
           <div class="mb-3">
             <label for="Textarea1" class="form-label">備註</label>
-            <textarea class="form-control" rows="3" v-model="modalData.Content"></textarea>
+            <span v-if="isEditMode === '檢視'"><br/>{{modalData.Content}}</span>
+            <textarea v-else class="form-control" rows="3" v-model="modalData.Content"></textarea>
           </div>
         </template>
         <template #footer>
-          <button type="button" class="btn btn-color01" @click="saveItem">儲存</button>
+          <button v-if="isEditMode !== '檢視'" type="button" class="btn btn-color01" @click="saveItem">儲存</button>
         </template>
       </lc-modal>
     </div>

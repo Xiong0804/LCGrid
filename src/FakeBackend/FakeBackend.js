@@ -103,6 +103,12 @@ const Delete = (receNos) => {
         }
     });
 }
+/* 
+ * 回傳SN最大值 
+*/
+const getMaxSN = () =>{
+  return database.length ? Math.max(...database.map(d => d.SN)) : 0;
+}
 
 export default {
   GetList,
@@ -110,4 +116,5 @@ export default {
   Create,
   Update,
   Delete,
+  getMaxSN,
 };
