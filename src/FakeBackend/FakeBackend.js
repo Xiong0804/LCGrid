@@ -76,7 +76,18 @@ const Get = (id) => {
  * @param {Object} item - 新增的資料
  */
 const Create = (item) => {
-  database.push(item);
+  const newSN = getMaxSN()+1;
+  const newItem = {
+    SN: newSN, // 流水號
+    ReceNo: item.ReceNo, // 公文文號
+    CaseNo: "K000" + newSN.toString().padStart(2, '0'), // 案號
+    Content: item.Content, // 備註
+    ComeDate: dayjs().add(newSN, 'day').toDate(),
+    ReceDate: dayjs().add(newSN - 60, 'day').toDate(),
+    FinalDate: dayjs().add(newSN - 30, 'day').toDate(),
+    User: item.User
+  }
+  database.push(newItem);
 }
 
 /**

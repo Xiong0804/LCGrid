@@ -25,6 +25,11 @@ const app = createApp({
     const modalRef = ref(null)
     const modalTitle = ref('');
     const isEditMode = ref('');
+    const MODE = {
+      Add: '新增',
+      Edit: '編輯',
+      View: '檢視'
+    }
     // 刪除事件
     const deleteItems = () => {
       const selectedItems = grid.value.getSelected(); // 取得選取的資料
@@ -50,39 +55,32 @@ const app = createApp({
     // 點新增按鈕開啟彈跳視窗
     const openModal = (doc)=>{
       modalData.value = {...doc}
-      modalTitle.value = '彈跳視窗 - 新增'
-      isEditMode.value = "新增"; // 新增狀態
+      setTypeFlag(MODE.Add);
       modalRef.value.show()
     }
 
     const onModalHidden = ()=>{
       modalData.value = {}
     }
-    // 新增資料
+    // 儲存按鈕事件
     const saveItem = () => {
-      // 新增時按儲存
       console.log(isEditMode.value);
       if(!modalData.value.ReceNo)
       {
         alert("請輸入公文文號");
         return
       }
-      if(isEditMode.value === '新增')
+      // 新增
+      if(isEditMode.value === MODE.Add)
       {
-        const itemSN = FakeBackend.getMaxSN(); // 取得SN最大值
         FakeBackend.Create({
-          SN: itemSN + 1, // 流水號
           ReceNo: modalData.value.ReceNo, // 公文文號
-          CaseNo: "K000" + itemSN.toString().padStart(2, '0'), // 案號
-          Content: modalData.value.Content, // 備註
-          ComeDate: dayjs().add(itemSN, 'day').toDate(),
-          ReceDate: dayjs().add(itemSN - 60, 'day').toDate(),
-          FinalDate: dayjs().add(itemSN - 30, 'day').toDate(),
-          User: modalData.value.User
+          Content: modalData.value.Content, // 備註        
+          User: modalData.value.User // 承辦人
         });
-
       }
-      else if(isEditMode.value === '編輯')
+      // 編輯
+      else if(isEditMode.value === MODE.Edit) 
       {
         FakeBackend.Update(modalData.value.SN,{
           ReceNo: modalData.value.ReceNo,
@@ -94,43 +92,49 @@ const app = createApp({
       modalRef.value.hide(); // 關閉彈跳視窗
     }
     // 編輯事件，帶入資料
-    const editItem = (SN) =>{
-      console.log(SN);
-      isEditMode.value = "編輯"; 
-      modalTitle.value = '彈出視窗 - 編輯';
-      const item = FakeBackend.Get(SN);
-      if(!item){
+    const editItem = (SN) =>{      
+      setTypeFlag(MODE.Edit);
+      const value = setData(SN);    
+      if(value === 0)
+      {
         alert("查無資料");
-        return;
       }
-      modalData.value = {
-        SN:item.SN,
-        ReceNo:item.ReceNo,
-        CaseNo:item.CaseNo,
-        ComeDate:item.ComeDate,
-        ReceDate:item.ReceDate,
-        FinalDate:item.FinalDate,
-        User:item.User,
-        Content:item.Content
-      };      
-      modalRef.value.show();
     }
     // 檢視事件，帶入資料
     const checkItem = (SN) =>{
-      isEditMode.value = "檢視"; 
-      modalTitle.value = '彈出視窗 - 檢視';
-      const item = FakeBackend.Get(SN);
-      modalData.value = {
-        SN:item.SN,
-        ReceNo:item.ReceNo,
-        CaseNo:item.CaseNo,
-        ComeDate:item.ComeDate,
-        ReceDate:item.ReceDate,
-        FinalDate:item.FinalDate,
-        User:item.User,
-        Content:item.Content
-      };      
-      modalRef.value.show();
+      setTypeFlag(MODE.View);
+      const value = setData(SN);
+      if(value === 0)
+      {
+        alert("查無資料");
+      }
+    }
+    // 新增/編輯/檢視的flag
+    const setTypeFlag =(sTypeFlag) =>{
+      isEditMode.value = sTypeFlag; 
+      modalTitle.value = '彈出視窗 - ' + sTypeFlag;
+
+    }
+    // 呼叫FakeBackend.get方法並賦值
+    const setData = (sn) =>{
+      const item = FakeBackend.Get(sn);
+      if(item)
+      {
+        modalData.value = {
+          SN:item.SN,
+          ReceNo:item.ReceNo,
+          CaseNo:item.CaseNo,
+          ComeDate:item.ComeDate,
+          ReceDate:item.ReceDate,
+          FinalDate:item.FinalDate,
+          User:item.User,
+          Content:item.Content
+        };      
+        modalRef.value.show();        
+      }
+      else{
+        return 0;
+      }
     }
     // 調整到期日的顏色
     const rowStyle = (item) => { 
@@ -167,6 +171,7 @@ const app = createApp({
       grid,
       modalTitle,
       isEditMode,
+      MODE,
     };
   },
 });
